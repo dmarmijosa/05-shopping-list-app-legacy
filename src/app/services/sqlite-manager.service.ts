@@ -1,5 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { Platform } from '@ionic/angular';
+import { Capacitor } from '@capacitor/core';
 import { CapacitorSQLite, capSQLiteResult } from '@capacitor-community/sqlite';
 import { database } from '../../assets/db/db.json';
 
@@ -16,7 +17,31 @@ export class SqliteManagerService {
   private readonly DB_NAME = database;
 
   async init() {
-    if (this.platform.is('desktop')) {
+    const isWeb = Capacitor.getPlatform() === 'web';
+
+    if (isWeb) {
+      // Asegura que el DOM esté listo para encontrar el elemento
+      if (document.readyState === 'loading') {
+        await new Promise((resolve) =>
+          document.addEventListener(
+            'DOMContentLoaded',
+            resolve as EventListener
+          )
+        );
+      }
+
+      // Garantiza que el elemento jeep-sqlite exista en el DOM
+      if (!document.querySelector('jeep-sqlite')) {
+        const el = document.createElement('jeep-sqlite');
+        document.body.prepend(el);
+      }
+
+      // Espera a que el custom element esté definido (por si lo registra el plugin)
+      try {
+        // no falla si no está registrado aún; sólo espera si aplica
+        await customElements.whenDefined('jeep-sqlite');
+      } catch {}
+
       this.isWebSignal.set(true);
       await CapacitorSQLite.initWebStore();
     } else if (this.platform.is('ios')) {
