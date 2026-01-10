@@ -1,0 +1,88 @@
+{
+    "database": "shopping-list.db",
+    "version": 1,
+    "encrypted": false,
+    "mode": "full",
+    "tables": [
+        {
+            "name": "items",
+            "schema": [
+                {
+                    "column": "id",
+                    "value": "INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT"
+                },
+                {
+                    "column": "description",
+                    "value": "TEXT NOT NULL"
+                },
+                {
+                    "column": "quantity",
+                    "value": "INTEGER NOT NULL"
+                },
+                {
+                    "column": "unit",
+                    "value": "INTEGER"
+                },
+                {
+                    "column": "checked",
+                    "value": "INTEGER DEFAULT 0"
+                }
+            ],
+            "values": []
+        },
+        {
+            "name": "units",
+            "schema": [
+                {
+                    "column": "id",
+                    "value": "INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT"
+                },
+                {
+                    "column": "description",
+                    "value": "TEXT"
+                }
+            ],
+            "values": [
+                [
+                    1,
+                    "kg"
+                ],
+                [
+                    2,
+                    "g"
+                ],
+                [
+                    3,
+                    "oz"
+                ],
+                [
+                    4,
+                    "ml"
+                ],
+                [
+                    5,
+                    "l"
+                ]
+            ]
+        },
+        {
+            "name": "settings",
+            "schema": [
+                {
+                    "column": "key",
+                    "value": "TEXT NOT NULL PRIMARY KEY"
+                },
+                {
+                    "column": "value",
+                    "value": "TEXT NOT NULL"
+                }
+            ],
+            "values": [
+                [
+                    "THEME",
+                    "light"
+                ]
+            ]
+        }
+    ]
+}
