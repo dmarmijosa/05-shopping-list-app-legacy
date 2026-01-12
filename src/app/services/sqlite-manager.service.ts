@@ -3,6 +3,7 @@ import { Platform } from '@ionic/angular';
 import { Capacitor } from '@capacitor/core';
 import {
   CapacitorSQLite,
+  capSQLiteChanges,
   capSQLiteResult,
   capSQLiteValues,
 } from '@capacitor-community/sqlite';
@@ -88,6 +89,18 @@ export class SqliteManagerService {
       values: value,
     }).then((resp: capSQLiteValues) => {
       return this.isIos() ? resp.values?.shift : resp.values;
+    });
+  }
+
+  async executeInstruction(statement: string, value: any[] = []) {
+    return await CapacitorSQLite.run({
+      database: this.DB_NAME,
+      statement,
+      values: value,
+    }).then((changes: capSQLiteChanges) => {
+      if (this.isWebSignal())
+        CapacitorSQLite.saveToStore({ database: this.DB_NAME });
+      return changes;
     });
   }
 }
