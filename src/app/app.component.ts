@@ -1,6 +1,7 @@
 import {
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
+  effect,
   inject,
   OnInit,
 } from '@angular/core';
@@ -18,6 +19,7 @@ export class AppComponent implements OnInit {
   private sqliteManagerService: SqliteManagerService =
     inject(SqliteManagerService);
   private platform: Platform = inject(Platform);
+  private loading: HTMLIonLoadingElement | null = null;
 
   private loadingCtrl = inject(LoadingController);
 
@@ -29,14 +31,21 @@ export class AppComponent implements OnInit {
     console.log(this.isReady());
   }
 
-  initApp() {
-    const loading = this.loadingCtrl.create({
+  async initApp() {
+    this.loading = await this.loadingCtrl.create({
       message: 'Initializing App...',
-      duration: 3000,
     });
-    loading.then((load) => load.present());
+    await this.loading.present();
     this.platform.ready().then(() => {
       this.sqliteManagerService.init();
+    });
+  }
+
+  constructor() {
+    effect(() => {
+      if (this.isReady()) {
+        this.loading?.dismiss();
+      }
     });
   }
 }
