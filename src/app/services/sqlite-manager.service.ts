@@ -1,7 +1,11 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Capacitor } from '@capacitor/core';
-import { CapacitorSQLite, capSQLiteResult } from '@capacitor-community/sqlite';
+import {
+  CapacitorSQLite,
+  capSQLiteResult,
+  capSQLiteValues,
+} from '@capacitor-community/sqlite';
 import { database } from '../../assets/db/db.json';
 
 @Injectable({
@@ -75,5 +79,15 @@ export class SqliteManagerService {
     await CapacitorSQLite.createConnection({ database: this.DB_NAME });
     await CapacitorSQLite.open({ database: this.DB_NAME });
     this.isReady.set(true);
+  }
+
+  async executeQuery(statement: string, value: any[] = []) {
+    return await CapacitorSQLite.query({
+      database: this.DB_NAME,
+      statement,
+      values: value,
+    }).then((resp: capSQLiteValues) => {
+      return this.isIos() ? resp.values?.shift : resp.values;
+    });
   }
 }
