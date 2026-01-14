@@ -88,7 +88,7 @@ export class SqliteManagerService {
       statement,
       values: value,
     }).then((resp: capSQLiteValues) => {
-      return this.isIos() ? resp.values?.shift : resp.values;
+      return resp.values;
     });
   }
 
