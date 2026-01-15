@@ -1,5 +1,4 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
   IonContent,
@@ -13,6 +12,8 @@ import {
 import { FormItemComponent } from './components/form-item/form-item.component';
 import { addIcons } from 'ionicons';
 import { addOutline } from 'ionicons/icons';
+import { ItemService } from 'src/app/services/item.service';
+import { ToastService } from 'src/app/services/toast.service';
 @Component({
   selector: 'app-shopping-list',
   templateUrl: './shopping-list.page.html',
@@ -30,6 +31,8 @@ import { addOutline } from 'ionicons/icons';
 })
 export class ShoppingListPage implements OnInit {
   private modalCtrl: ModalController = inject(ModalController);
+  private temService = inject(ItemService);
+  private toastService = inject(ToastService);
 
   constructor() {
     addIcons({
@@ -48,6 +51,14 @@ export class ShoppingListPage implements OnInit {
     modal.present();
 
     const { data, role } = await modal.onWillDismiss();
-    if (role === 'confirm') console.log(data);
+    if (role === 'confirm')
+      this.temService
+        .createItem(data)
+        .then(() => {
+          this.toastService.showToast('Item created successfully!');
+        })
+        .catch((error) => {
+          this.toastService.showToast(`Error creating item: ${error.message}`);
+        });
   }
 }
