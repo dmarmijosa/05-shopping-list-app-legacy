@@ -59,10 +59,7 @@ export class FormItemComponent {
       nonNullable: true,
       validators: [Validators.required, Validators.min(1)],
     }),
-    unit: new FormControl(undefined, {
-      nonNullable: true,
-      validators: [Validators.required],
-    }),
+    unit: new FormControl(undefined),
   });
 
   unitsSignal = this.unitService.unitsSignals;
@@ -72,10 +69,6 @@ export class FormItemComponent {
     checked: false,
   };
   constructor() {}
-
-  ngOnInit() {
-    console.log('Units in modal:', this.unitsSignal());
-  }
 
   // Método para verificar si un campo tiene error y fue tocado
   hasError(fieldName: string): boolean {

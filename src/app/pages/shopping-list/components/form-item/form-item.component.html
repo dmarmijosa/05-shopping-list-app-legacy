@@ -58,7 +58,7 @@
           <ion-item lines="none">
             <ion-select label="Unidad" formControlName="unit">
               @for(unit of unitsSignal(); track unit.id){
-              <ion-select-option [value]="unit.id">{{
+              <ion-select-option [value]="unit">{{
                 unit.description
               }}</ion-select-option>
               }
