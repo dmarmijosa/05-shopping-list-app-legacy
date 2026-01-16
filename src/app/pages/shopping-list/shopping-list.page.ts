@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, effect, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   IonContent,
@@ -31,16 +31,22 @@ import { ToastService } from 'src/app/services/toast.service';
 })
 export class ShoppingListPage implements OnInit {
   private modalCtrl: ModalController = inject(ModalController);
-  private temService = inject(ItemService);
+  private itemService = inject(ItemService);
   private toastService = inject(ToastService);
 
   constructor() {
     addIcons({
       addOutline,
     });
+    effect(() => {
+      console.log(this.itemService.itemsSignal());
+    });
   }
 
-  ngOnInit() {}
+  async ngOnInit() {
+    await this.itemService.getItems();
+    console.log(this.itemService.itemsSignal());
+  }
 
   async openModal() {
     const modal = await this.modalCtrl.create({
@@ -52,7 +58,7 @@ export class ShoppingListPage implements OnInit {
 
     const { data, role } = await modal.onWillDismiss();
     if (role === 'confirm')
-      this.temService
+      this.itemService
         .createItem(data)
         .then(() => {
           this.toastService.showToast('Item created successfully!');

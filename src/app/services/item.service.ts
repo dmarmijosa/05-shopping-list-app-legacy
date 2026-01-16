@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { SqliteManagerService } from './sqlite-manager.service';
 import { IItem } from '../models';
 import { capSQLiteChanges } from '@capacitor-community/sqlite';
@@ -8,6 +8,7 @@ import { capSQLiteChanges } from '@capacitor-community/sqlite';
 })
 export class ItemService {
   private sqliteManager = inject(SqliteManagerService);
+  itemsSignal = signal<IItem[]>([]);
 
   async createItem(item: IItem) {
     // incursiones de código aquí
@@ -19,4 +20,27 @@ export class ItemService {
         return result;
       });
   }
+
+  async getItems(): Promise<IItem[]> {
+    const statement = `SELECT * FROM items`;
+    return await this.sqliteManager
+      .executeQuery(statement)
+      .then((response: any[] | undefined) => {
+        const items: IItem[] = [];
+        if (response) {
+          response.forEach((row) => {
+            items.push({
+              id: row.id,
+              description: row.description,
+              quantity: row.quantity,
+              checked: row.checked === 1,
+            });
+          });
+        }
+        this.itemsSignal.set(items);
+        return items;
+      });
+  }
+
+  // Más métodos para actualizar y eliminar ítems pueden ser añadidos aquí
 }
