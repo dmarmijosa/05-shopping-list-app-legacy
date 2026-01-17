@@ -8,17 +8,39 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  <ion-searchbar
+    [animated]="true"
+    [placeholder]="'Buscar item'"
+    clear-icon="trash-bin"
+    (ionInput)="filterItems($event)"
+  ></ion-searchbar>
   @for(groupItem of groupItems; track groupItem.name){
   <ion-item-group>
     <ion-item-divider>
       <ion-label>{{groupItem.name}}</ion-label>
     </ion-item-divider>
     @for(item of groupItem.items; track item.id){
-    <ion-item>
+    <ion-item lines="none">
+      <ion-button slot="start" fill="none">
+        <ion-checkbox [checked]="item.checked" (ionChange)="updateItem(item)">
+        </ion-checkbox>
+      </ion-button>
+      <!--
+      Para click en todo el archivo
+      <ion-checkbox
+        slot="start"
+        [checked]="item.checked"
+        (ionChange)="updateItem(item)"
+      ></ion-checkbox> -->
       <ion-text
         >{{item.quantity}}{{item.unit?.description }}
         {{item.description}}</ion-text
       >
+      <ion-icon
+        slot="end"
+        name="close-outline"
+        (click)="confirmDelete(item)"
+      ></ion-icon>
     </ion-item>
     }
   </ion-item-group>

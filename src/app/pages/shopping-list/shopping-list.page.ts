@@ -12,19 +12,27 @@ import {
   IonItemDivider,
   IonLabel,
   IonText,
+  IonCheckbox,
+  IonButton,
+  IonSearchbar,
 } from '@ionic/angular/standalone';
 import { FormItemComponent } from './components/form-item/form-item.component';
 import { addIcons } from 'ionicons';
-import { addOutline } from 'ionicons/icons';
+import { addOutline, closeOutline, trashBin } from 'ionicons/icons';
 import { ItemService } from 'src/app/services/item.service';
 import { ToastService } from 'src/app/services/toast.service';
 import { IGroupItems } from 'src/app/models/group-items.model';
+import { IItem } from 'src/app/models';
+import { capSQLiteChanges } from '@capacitor-community/sqlite';
+import { AlertService } from 'src/app/services/alert.service';
+import { every } from 'rxjs';
 @Component({
   selector: 'app-shopping-list',
   templateUrl: './shopping-list.page.html',
   styleUrls: ['./shopping-list.page.scss'],
   standalone: true,
   imports: [
+    IonSearchbar,
     IonText,
     IonLabel,
     IonItemDivider,
@@ -36,12 +44,15 @@ import { IGroupItems } from 'src/app/models/group-items.model';
     IonTitle,
     IonToolbar,
     FormsModule,
+    IonCheckbox,
+    IonButton,
   ],
 })
 export class ShoppingListPage implements OnInit {
   private modalCtrl: ModalController = inject(ModalController);
   private itemService = inject(ItemService);
   private toastService = inject(ToastService);
+  private alertService = inject(AlertService);
   public groupItems: IGroupItems[] = [
     {
       name: 'Pendientes',
@@ -54,12 +65,8 @@ export class ShoppingListPage implements OnInit {
   ];
 
   constructor() {
-    addIcons({
-      addOutline,
-    });
-    effect(() => {
-      console.log(this.itemService.itemsSignal());
-    });
+    addIcons({ addOutline, closeOutline, trashBin });
+
     effect(() => {
       this.groupItems[0].items = this.itemService
         .itemsSignal()
@@ -92,5 +99,40 @@ export class ShoppingListPage implements OnInit {
         .catch((error) => {
           this.toastService.showToast(`Error creating item: ${error.message}`);
         });
+  }
+
+  updateItem(item: IItem) {
+    item.checked = !item.checked;
+    this.itemService
+      .updateItem(item)
+      .then((change: capSQLiteChanges) => {
+        this.toastService.showToast('Se ha modificado el item');
+      })
+      .catch((error) => {
+        this.toastService.showToast('No se ha modificado el item');
+      });
+  }
+
+  confirmDelete(item: IItem) {
+    this.alertService.alertConfirm(
+      'Confirmar eliminar',
+      '¿Estas seguro de borrar el item?',
+      () => this.deleteItem(item)
+    );
+  }
+
+  deleteItem(item: IItem) {
+    this.itemService
+      .deleteItem(item)
+      .then((changes: capSQLiteChanges) =>
+        this.toastService.showToast('Se ha eliminado el item')
+      )
+      .catch((err) => this.toastService.showToast('Hubo un error al eliminar'));
+  }
+
+  filterItems($event: Event) {
+    const target = $event.target as HTMLIonSearchbarElement;
+    const value = target.value;
+    this.itemService.getItems(value!);
   }
 }
