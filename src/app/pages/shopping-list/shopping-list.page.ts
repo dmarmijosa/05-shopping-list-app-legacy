@@ -15,23 +15,34 @@ import {
   IonCheckbox,
   IonButton,
   IonSearchbar,
+  IonButtons,
+  IonToggle,
 } from '@ionic/angular/standalone';
 import { FormItemComponent } from './components/form-item/form-item.component';
 import { addIcons } from 'ionicons';
-import { addOutline, closeOutline, trashBin } from 'ionicons/icons';
+import {
+  addOutline,
+  closeOutline,
+  trashBin,
+  sunny,
+  sunnyOutline,
+  moonOutline,
+} from 'ionicons/icons';
 import { ItemService } from 'src/app/services/item.service';
 import { ToastService } from 'src/app/services/toast.service';
 import { IGroupItems } from 'src/app/models/group-items.model';
 import { IItem } from 'src/app/models';
 import { capSQLiteChanges } from '@capacitor-community/sqlite';
 import { AlertService } from 'src/app/services/alert.service';
-import { every } from 'rxjs';
+import { Theme } from 'src/app/types';
 @Component({
   selector: 'app-shopping-list',
   templateUrl: './shopping-list.page.html',
   styleUrls: ['./shopping-list.page.scss'],
   standalone: true,
   imports: [
+    IonToggle,
+    IonButtons,
     IonSearchbar,
     IonText,
     IonLabel,
@@ -53,6 +64,9 @@ export class ShoppingListPage implements OnInit {
   private itemService = inject(ItemService);
   private toastService = inject(ToastService);
   private alertService = inject(AlertService);
+
+  public theme: Theme = 'light';
+
   public groupItems: IGroupItems[] = [
     {
       name: 'Pendientes',
@@ -65,7 +79,14 @@ export class ShoppingListPage implements OnInit {
   ];
 
   constructor() {
-    addIcons({ addOutline, closeOutline, trashBin });
+    addIcons({
+      sunnyOutline,
+      moonOutline,
+      addOutline,
+      closeOutline,
+      sunny,
+      trashBin,
+    });
 
     effect(() => {
       this.groupItems[0].items = this.itemService

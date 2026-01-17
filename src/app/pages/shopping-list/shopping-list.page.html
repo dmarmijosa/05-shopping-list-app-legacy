@@ -1,8 +1,17 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
+  <ion-toolbar class="ion-text-center">
+    <ion-buttons slot="start">
+      <ion-icon name="sunny-outline" />
+      <ion-toggle class="ion-activatable" />
+      <ion-icon name="moon-outline" />
+    </ion-buttons>
     <ion-title color="transparent">Mi lista de compra</ion-title>
     <ion-item slot="end" color="transparent" lines="none">
-      <ion-icon name="add-outline" (click)="openModal()"></ion-icon>
+      <ion-icon
+        class="ion-activatable"
+        name="add-outline"
+        (click)="openModal()"
+      ></ion-icon>
     </ion-item>
   </ion-toolbar>
 </ion-header>
