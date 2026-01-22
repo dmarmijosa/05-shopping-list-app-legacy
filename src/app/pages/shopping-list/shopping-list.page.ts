@@ -35,6 +35,7 @@ import { capSQLiteChanges } from '@capacitor-community/sqlite';
 import { AlertService } from 'src/app/services/alert.service';
 import { Theme } from 'src/app/types';
 import { ModalService } from 'src/app/services/modal.service';
+import { SettingsService } from 'src/app/services/settings.service';
 @Component({
   selector: 'app-shopping-list',
   templateUrl: './shopping-list.page.html',
@@ -64,8 +65,10 @@ export class ShoppingListPage implements OnInit {
   private itemService = inject(ItemService);
   private toastService = inject(ToastService);
   private alertService = inject(AlertService);
+  private settingsService = inject(SettingsService);
 
   public theme: Theme = 'light';
+  private readonly SETTING_THEME = 'THEME';
 
   public groupItems: IGroupItems[] = [
     {
@@ -100,6 +103,10 @@ export class ShoppingListPage implements OnInit {
 
   async ngOnInit() {
     await this.itemService.getItems();
+    this.theme = (await this.settingsService.getSettingByKey(
+      this.SETTING_THEME
+    )) as Theme;
+    console.log(this.theme);
   }
 
   async openModal() {
