@@ -4,7 +4,6 @@ import {
   IonContent,
   IonHeader,
   IonTitle,
-  ModalController,
   IonToolbar,
   IonItem,
   IonIcon,
@@ -35,6 +34,7 @@ import { IItem } from 'src/app/models';
 import { capSQLiteChanges } from '@capacitor-community/sqlite';
 import { AlertService } from 'src/app/services/alert.service';
 import { Theme } from 'src/app/types';
+import { ModalService } from 'src/app/services/modal.service';
 @Component({
   selector: 'app-shopping-list',
   templateUrl: './shopping-list.page.html',
@@ -60,7 +60,7 @@ import { Theme } from 'src/app/types';
   ],
 })
 export class ShoppingListPage implements OnInit {
-  private modalCtrl: ModalController = inject(ModalController);
+  private modalService = inject(ModalService);
   private itemService = inject(ItemService);
   private toastService = inject(ToastService);
   private alertService = inject(AlertService);
@@ -103,23 +103,17 @@ export class ShoppingListPage implements OnInit {
   }
 
   async openModal() {
-    const modal = await this.modalCtrl.create({
-      component: FormItemComponent,
-      initialBreakpoint: 0.25,
-      breakpoints: [0, 0.25, 0.5, 0.75],
+    const { data, role } = await this.modalService.open(FormItemComponent, {
+      initialBreakpoint: 0.5,
     });
-    modal.present();
-
-    const { data, role } = await modal.onWillDismiss();
-    if (role === 'confirm')
+    if (role === 'confirm') {
       this.itemService
         .createItem(data)
-        .then(() => {
-          this.toastService.showToast('Item created successfully!');
-        })
-        .catch((error) => {
-          this.toastService.showToast(`Error creating item: ${error.message}`);
-        });
+        .then(() => this.toastService.showToast('Item created successfully!'))
+        .catch((error) =>
+          this.toastService.showToast(`Error creating item: ${error.message}`)
+        );
+    }
   }
 
   updateItem(item: IItem) {
