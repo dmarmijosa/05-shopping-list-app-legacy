@@ -21,7 +21,7 @@ export class SettingsService {
   async updateSettingByKey(key: string, value: string) {
     const statement = `UPDATE settings SET value = ? WHERE key = ?`;
     const values = [value, key];
-    const result = await this.sqlLIteManagerService.executeQuery(
+    const result = await this.sqlLIteManagerService.executeInstruction(
       statement,
       values
     );

@@ -1,5 +1,6 @@
 import { Component, effect, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { NgClass } from '@angular/common';
 import {
   IonContent,
   IonHeader,
@@ -60,6 +61,7 @@ import { ToogleThemeDirective } from 'src/app/directives/toogle-theme.directive'
     IonCheckbox,
     IonButton,
     ToogleThemeDirective,
+    NgClass,
   ],
 })
 export class ShoppingListPage implements OnInit {
@@ -69,7 +71,7 @@ export class ShoppingListPage implements OnInit {
   private alertService = inject(AlertService);
   private settingsService = inject(SettingsService);
 
-  public theme: Theme = 'light';
+  public theme?: Theme;
   private readonly SETTING_THEME = 'THEME';
 
   public groupItems: IGroupItems[] = [
@@ -108,7 +110,8 @@ export class ShoppingListPage implements OnInit {
     this.theme = (await this.settingsService.getSettingByKey(
       this.SETTING_THEME
     )) as Theme;
-    console.log(this.theme);
+
+    console.log('Current theme:', this.theme);
   }
 
   async openModal() {
@@ -158,5 +161,15 @@ export class ShoppingListPage implements OnInit {
     const target = $event.target as HTMLIonSearchbarElement;
     const value = target.value;
     this.itemService.getItems(value!);
+  }
+
+  async updateThemeSet(theme: Theme) {
+    try {
+      this.theme = theme;
+      await this.settingsService.updateSettingByKey(this.SETTING_THEME, theme);
+      this.toastService.showToast('Tema actualizado correctamente');
+    } catch (error: any) {
+      this.toastService.showToast(`Error al actualizar tema: ${error.message}`);
+    }
   }
 }

@@ -1,10 +1,18 @@
 <ion-header [translucent]="true">
   <ion-toolbar class="ion-text-center">
+    @if (theme) {
     <ion-buttons slot="start">
       <ion-icon name="sunny-outline" />
-      <ion-toggle appToogleTheme class="ion-activatable" />
+      <ion-toggle
+        appToogleTheme
+        [checked]="theme === 'dark'"
+        [themeInitial]="theme"
+        (themeSelected)="updateThemeSet($event)"
+        class="ion-activatable"
+      ></ion-toggle>
       <ion-icon name="moon-outline" />
     </ion-buttons>
+    }
     <ion-title color="transparent">Mi lista de compra</ion-title>
     <ion-item slot="end" color="transparent" lines="none">
       <ion-icon
@@ -41,7 +49,7 @@
         [checked]="item.checked"
         (ionChange)="updateItem(item)"
       ></ion-checkbox> -->
-      <ion-text
+      <ion-text [ngClass]="{'line-strike': item.checked}"
         >{{item.quantity}}{{item.unit?.description }}
         {{item.description}}</ion-text
       >
@@ -51,7 +59,11 @@
         (click)="confirmDelete(item)"
       ></ion-icon>
     </ion-item>
+    } @empty {
+    <ion-label class="ml-2">No hay items</ion-label>
     }
   </ion-item-group>
+  } @empty {
+  <ion-label class="ml-2">No hay items</ion-label>
   }
 </ion-content>
