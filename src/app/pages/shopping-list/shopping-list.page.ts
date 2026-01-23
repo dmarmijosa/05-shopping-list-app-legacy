@@ -36,6 +36,7 @@ import { AlertService } from 'src/app/services/alert.service';
 import { Theme } from 'src/app/types';
 import { ModalService } from 'src/app/services/modal.service';
 import { SettingsService } from 'src/app/services/settings.service';
+import { ToogleThemeDirective } from 'src/app/directives/toogle-theme.directive';
 @Component({
   selector: 'app-shopping-list',
   templateUrl: './shopping-list.page.html',
@@ -58,6 +59,7 @@ import { SettingsService } from 'src/app/services/settings.service';
     FormsModule,
     IonCheckbox,
     IonButton,
+    ToogleThemeDirective,
   ],
 })
 export class ShoppingListPage implements OnInit {
